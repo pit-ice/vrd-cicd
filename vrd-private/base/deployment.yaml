@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vrd-admin
+  name: vrd-private
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: vrd-admin
+      app: vrd-private
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -15,20 +15,18 @@ spec:
   template:
     metadata:
       labels:
-        app: vrd-admin
+        app: vrd-private
     spec:
-      nodeSelector:
-        'beta.kubernetes.io/os': linux
       containers:
-        - name: vrd-admin
-          image: bekube/vrd-admin:latest
+        - name: vrd-private
+          image: bekube/vrd-private:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
           readinessProbe:
             failureThreshold: 3
             httpGet:
-              path: /healthz
+              path: /
               port: 80
               scheme: HTTP
             initialDelaySeconds: 5
@@ -38,7 +36,7 @@ spec:
           livenessProbe:
             failureThreshold: 3
             httpGet:
-              path: /healthz
+              path: /
               port: 80
               scheme: HTTP
             initialDelaySeconds: 5
@@ -54,11 +52,11 @@ spec:
             - name: config
               mountPath: "/etc/nginx/conf.d/default.conf"
               readOnly: true
-              subPath: html
+              subPath: default.conf
       volumes:
         - name: config
           configMap:
-            name: vrd-admin-configmap
+            name: vrd-private-configmap
             items:
               - key: default.conf
                 path: default.conf 

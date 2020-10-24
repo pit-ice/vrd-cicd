@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vrd-admin
+  name: vrd-private
 spec:
   replicas: 1
   strategy:
@@ -11,10 +11,10 @@ spec:
   template:
     metadata:
       labels:
-        app: vrd-admin
+        app: vrd-private
     spec:
       containers:
-        - name: vrd-admin
+        - name: vrd-private
           resources:
             requests:
               cpu: 250m
